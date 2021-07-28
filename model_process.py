@@ -77,7 +77,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
     ct = CentroidTracker(maxDisappeared=30, maxDistance=100)
     skip_frames  = 30
     print("START Process")
-    fps = FPS.start()
+    fps = FPS().start()
 
     while True:
         # grab the next frame and handle if we are reading from either
@@ -227,8 +227,21 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
             cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)        
-            
+        
+        fps.update()
+        fps.stop()
+        info = [
+		("Up", totalUp),
+		("Down", totalDown),
+		("FPS", int(fps.fps())),
+        ]
+        # loop over the info tuples and draw them on our frame
+        for (i, (k, v)) in enumerate(info):
+            text = "{}: {}".format(k, v)
+            cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
         # check to see if we should write the frame to disk
+
         if writer is not None:
             writer.write(frame)
         # show the output frame
@@ -244,6 +257,14 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
         # increment the total number of frames processed thus far and
         # then update the FPS counter
         totalFrames += 1
+        #print(totalFrames)
+
+        # Display each frame
+        cv2.imshow("video", frame)
+
+        # Quit when 'q' is pressed
+        if cv2.waitKey(1) == ord('q'):
+            break
     
     # check to see if we need to release the video writer pointer
     if writer is not None:
@@ -253,10 +274,9 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
 
     print(placeholder_up)
     print(placeholder_down)
-    print("Total Frames: ".format(totalFrames))
-    print("Total Frames: ".format(totalFrames))
-    print("FPS: ".format(fps.fps()))
-    print("Time: ".format(fps.elapsed()))
+    #print("Total Frames: ".format(totalFrames))
+    #print("FPS: ".format(fps.fps()))
+    #print("Time: ".format(fps.elapsed()))
 
     vs.release()
     # close any open windows

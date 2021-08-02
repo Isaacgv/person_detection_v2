@@ -223,8 +223,8 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
                     # if the direction is negative (indicating the object
                     # is moving up) AND the centroid is above the center
                     # line, count the object
-                    distance_up = np.cross(np.array(p1_up)-np.array(p0_up), centroid-p0_up)/np.linalg.norm(p1_up-p0_up)
-                    distance_down = np.cross(np.array(p1_down)-np.array(p0_down),centroid-p0_down)/np.linalg.norm(p1_down-p0_down)
+                    distance_up = np.cross(np.array(p1_up)-np.array(p0_up), centroid-np.array(p0_up))/np.linalg.norm(np.array(p1_up)-np.array(p0_up))
+                    distance_down = np.cross(np.array(p1_down)-np.array(p0_down),centroid-np.array(p0_down))/np.linalg.norm(np.array(p1_down)-np.array(p0_down))
                     if (direction < 0 )and distance_up < 0:
                         totalUp += 1
                         to.counted = True

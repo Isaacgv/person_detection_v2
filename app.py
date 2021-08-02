@@ -20,10 +20,10 @@ DOWN_x1,  DOWN_y1 = W, H//2
 
 
 
-p0_up = np.array((UP_x0, UP_y0))
-p1_up = np.array((UP_x1, UP_y1))
-p0_down = np.array((DOWN_x0, DOWN_y0))
-p1_down = np.array((DOWN_x1, DOWN_y1))
+p0_up = (UP_x0, UP_y0)
+p1_up = (UP_x1, UP_y1)
+p0_down = (DOWN_x0, DOWN_y0)
+p1_down = (DOWN_x1, DOWN_y1)
 
 #show_lines(frame, p0_up, p1_up, p0_down, p1_down)
 

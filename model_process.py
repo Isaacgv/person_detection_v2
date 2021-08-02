@@ -1,27 +1,30 @@
-from utils.utils_model import attempt_load, non_max_suppression, save_one_box, letterbox, scale_coords
+#from utils.utils_model import attempt_load, non_max_suppression, save_one_box, letterbox, scale_coords
 import imutils
 from imutils.video import FPS
 from track import TrackableObject, CentroidTracker  
 import numpy as np
-import torch
+#import torch
 import cv2
 import dlib
+import sys
 
 
 def load_model():
     print("LOAD MODEL")
-    device = torch.device('cpu')
-    weights = ['models/model/model_detect.pt']
-    model = attempt_load(weights, map_location=device)
+    #device = torch.device('cpu')
+    #weights = ['models/model/model_detect.pt']
+    #model = attempt_load(weights, map_location=device)
     img_size = 640
-    half = False #device.type != 'cpu'
-    if device.type != 'cpu':
-        model(torch.zeros(1, 3, img_size, img_size).to(device).type_as(next(model.parameters())))
+    #half = False #device.type != 'cpu'
+    #if device.type != 'cpu':
+    #    model(torch.zeros(1, 3, img_size, img_size).to(device).type_as(next(model.parameters())))
 
-    stride = int(model.stride.max())
-    return model, img_size, half, stride, device
+    #stride = int(model.stride.max())
+    model = jetson.inference.detectNet("ssd-mobilenet-v2", sys.argv, 0.3)
+    return model, img_size #model, img_size, half, stride, device
 
-model, img_size, half, stride, device = load_model()
+#model, img_size, half, stride, device = load_model()
+model, img_size = load_model()
 
 frame_show = None
 placeholder_up = 0
@@ -30,32 +33,39 @@ placeholder_down = 0
 def detect_person(img_t):
     
     # Padded resize
-    img = letterbox(img_t, img_size, stride=stride)[0]
+    #img = letterbox(img_t, img_size, stride=stride)[0]
 
     # Convert
-    img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
-    img = np.ascontiguousarray(img)
+    #img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+    #img = np.ascontiguousarray(img)
 
-    img = torch.from_numpy(img).to(device)
-    img = img.half() if half else img.float()  # uint8 to fp16/32
-    img /= 255.0  # 0 - 255 to 0.0 - 1.0
-    img = img.unsqueeze(0)
+    #img = torch.from_numpy(img).to(device)
+    #img = img.half() if half else img.float()  # uint8 to fp16/32
+    #img /= 255.0  # 0 - 255 to 0.0 - 1.0
+    #img = img.unsqueeze(0)
 
-    pred = model(img, augment=False)[0]
+    #pred = model(img, augment=False)[0]
    
-    pred = non_max_suppression(pred, 0.25, 0.45, classes=0, agnostic=True)
+    #pred = non_max_suppression(pred, 0.25, 0.45, classes=0, agnostic=True)
 
-    images_detected = []
+    #images_detected = []
     
-    for i, det in enumerate(pred):  # detections per image
+    #for i, det in enumerate(pred):  # detections per image
     
-        im0 = img_t.copy()
+    #    im0 = img_t.copy()
 
-        gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-        if len(det):
-            # Rescale boxes from img_size to im0 size
-            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
-            return det
+    #    gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+    #    if len(det):
+            # Rescale boxes from img_size tso im0 size
+    #        det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
+    #        return det
+    detections = model.Detect(img_t, overlay="box,labels,conf")
+    print(detections)
+    for detec in detections:
+        if detec.ClassID == 1:
+            startX, startY = detec.Left, detec.Top
+            endX, endY = detec.Rights, detec.Bottom
+            return (startX, startY, endX, endY), detec.Confidence, detec.ClassID
 
         
 

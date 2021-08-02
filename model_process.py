@@ -61,17 +61,18 @@ def detect_person(img_t):
             # Rescale boxes from img_size tso im0 size
     #        det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
     #        return det
-    img_t = img_t.cv2.resize(img_t, (img_size, img_size))
+    img_t = cv2.resize(img_t, (img_size, img_size))
     img_t = cv2.cvtColor(img_t, cv2.COLOR_BGR2RGB)
     img_t = jetson.utils.cudaFromNumpy(img_t)
     detections = model.Detect(img_t, overlay="box,labels,conf")
     print(detections)
+    result_detect = []
     for detec in detections:
         if detec.ClassID == 1:
             startX, startY = detec.Left, detec.Top
-            endX, endY = detec.Rights, detec.Bottom
-            return (startX, startY, endX, endY), detec.Confidence, detec.ClassID
-
+            endX, endY = detec.Right, detec.Bottom
+            result_detect.append((startX, startY, endX, endY), detec.Confidence, detec.ClassID)
+        return result_detect
         
 
 def show_lines(frame, p0_up, p1_up, p0_down, p1_down):
@@ -140,7 +141,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
     # loop over the detections
             detections = detect_person(frame)
             #print(detections)   
-            if detections != None:       
+            if detections != []:       
                 for *xyxy, conf, cls in reversed(detections):
                     # extract the confidence (i.e., probability) associated
                     # with the prediction

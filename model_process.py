@@ -7,6 +7,8 @@ import numpy as np
 import cv2
 import dlib
 import sys
+import jetson.inference
+import jetson.utils
 
 
 def load_model():
@@ -59,6 +61,9 @@ def detect_person(img_t):
             # Rescale boxes from img_size tso im0 size
     #        det[:, :4] = scale_coords(img.shape[2:], det[:, :4], im0.shape).round()
     #        return det
+    img_t = img_t.cv2.resize(img_t, (img_size, img_size))
+    img_t = cv2.cvtColor(img_t, cv2.COLOR_BGR2RGB)
+    img_t = jetson.utils.cudaFromNumpy(img_t)
     detections = model.Detect(img_t, overlay="box,labels,conf")
     print(detections)
     for detec in detections:

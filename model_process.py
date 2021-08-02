@@ -142,7 +142,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
             detections = detect_person(frame)
             #print(detections)   
             if detections != []:       
-                for *xyxy, conf, cls in reversed(detections):
+                for *xyxy, conf, cls in detections:
                     # extract the confidence (i.e., probability) associated
                     # with the prediction
                     # filter out weak detections by requiring a minimum

@@ -69,8 +69,8 @@ def detect_person(img_t):
     result_detect = []
     for detec in detections:
         if detec.ClassID == 1:
-            startX, startY = detec.Left, detec.Top
-            endX, endY = detec.Right, detec.Bottom
+            startX, startY = int(detec.Left+0.5), int(detec.Top+0.5)
+            endX, endY = int(detec.Right+0.5), int(detec.Bottom+0.5)
             result_detect.append(((startX, startY, endX, endY), detec.Confidence, detec.ClassID))
         return result_detect
         

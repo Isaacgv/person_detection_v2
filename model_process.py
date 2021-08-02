@@ -139,7 +139,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
     #		detections = net.forward()
             
     # loop over the detections
-            detections = detect_person(frame)
+            detections = detect_person(rgb)
             #print(detections)   
             if detections != []:       
                 for *xyxy, conf, cls in detections:
@@ -185,7 +185,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
         # draw a horizontal line in the center of the frame -- once an
         # object crosses this line we will determine whether they were
         # moving 'up' or 'down'
-     
+        print(p0_up, p1_up)
         cv2.line(frame, p0_up, p1_up, (255, 0, 0), 2)
         cv2.line(frame, p0_down, p1_down, (0, 0, 255), 2)
         # use the centroid tracker to associate the (1) old object

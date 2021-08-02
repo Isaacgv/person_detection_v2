@@ -151,7 +151,7 @@ def process_detect(vs, p0_up, p1_up, p0_down, p1_down, y_line, path_output=None)
                     # compute the (x, y)-coordinates of the bounding box
                     # for the object
                     print(xyxy, conf, cls)
-                    (startX, startY, endX, endY) = xyxy
+                    (startX, startY, endX, endY) = xyxy[0]
                     # construct a dlib rectangle object from the bounding
                     # box coordinates and then start the dlib correlation
                     # tracker

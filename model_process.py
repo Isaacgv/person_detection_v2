@@ -22,7 +22,7 @@ def load_model():
     #    model(torch.zeros(1, 3, img_size, img_size).to(device).type_as(next(model.parameters())))
 
     #stride = int(model.stride.max())
-    model = jetson.inference.detectNet("ssd-mobilenet-v2", sys.argv, 0.3)
+    model = jetson.inference.detectNet("ssd-mobilenet-v2", sys.argv, 0.25)
     return model, img_size #model, img_size, half, stride, device
 
 #model, img_size, half, stride, device = load_model()
@@ -65,9 +65,10 @@ def detect_person(img_t):
     img_t = cv2.cvtColor(img_t, cv2.COLOR_BGR2RGB)
     img_t = jetson.utils.cudaFromNumpy(img_t)
     detections = model.Detect(img_t, overlay="box,labels,conf")
-    print(detections)
+    #print(detections)
     result_detect = []
     for detec in detections:
+        print(detec.ClassID)
         if detec.ClassID == 1:
             startX, startY = int(detec.Left+0.5), int(detec.Top+0.5)
             endX, endY = int(detec.Right+0.5), int(detec.Bottom+0.5)
